@@ -175,7 +175,7 @@
             padding-bottom: 10px;
         }
         
-        /* ===== ITENS DO MENU ===== */
+        /* ===== ITENS DO MENU (SIMPLIFICADO) ===== */
         .menu-item {
             margin: 15px 0;
             border: 1px solid #333;
@@ -183,6 +183,9 @@
             background: linear-gradient(90deg, rgba(0, 255, 0, 0.05) 0%, rgba(0, 0, 0, 0.95) 100%);
             position: relative;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
         .menu-item:hover {
@@ -194,14 +197,15 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 10px;
             flex-wrap: wrap;
+            gap: 10px;
         }
         
         .item-name {
             font-size: 10px;
             color: #00ffff;
             text-shadow: 1px 1px 2px rgba(0, 255, 255, 0.5);
+            flex: 1;
         }
         
         .item-price {
@@ -214,70 +218,46 @@
             font-size: 9px;
             color: #cccccc;
             line-height: 1.6;
-            margin-top: 8px;
-            margin-bottom: 15px;
         }
         
-        /* ===== CONTROLES DE QUANTIDADE ===== */
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .quantity-btn {
-            background: #ff0080;
-            color: #000;
-            border: none;
-            width: 30px;
-            height: 30px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .quantity-btn:hover {
-            background: #00ffff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-        }
-        
-        .quantity-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .quantity-display {
-            color: #00ff00;
-            font-size: 10px;
-            min-width: 30px;
-            text-align: center;
-        }
-        
-        .add-to-cart {
+        /* ===== BOTÃO ADICIONAR SIMPLIFICADO ===== */
+        .add-item-btn {
             background: linear-gradient(45deg, #00ff00, #00ffff);
             color: #000;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 20px;
             font-family: 'Press Start 2P', cursive;
             font-size: 8px;
             cursor: pointer;
-            margin-left: auto;
             transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
         
-        .add-to-cart:hover {
+        .add-item-btn:hover {
             background: linear-gradient(45deg, #ffff00, #ff0080);
             box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
-            transform: scale(1.05);
+            transform: translateY(-2px);
         }
         
-        .add-to-cart:active {
-            transform: scale(0.98);
+        .add-item-btn:active {
+            transform: translateY(0);
         }
         
-        .add-to-cart.added {
+        .add-item-btn.added {
             background: linear-gradient(45deg, #00ff00, #00ff00) !important;
+        }
+        
+        /* Efeito de pulso ao adicionar */
+        @keyframes btnPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .add-item-btn.pulse {
+            animation: btnPulse 0.3s ease;
         }
         
         /* ===== EDIÇÃO LIMITADA ===== */
@@ -319,6 +299,7 @@
             border: 1px solid #333;
             background: rgba(0, 255, 0, 0.05);
             transition: all 0.3s ease;
+            gap: 10px;
         }
         
         .sauce-item:hover {
@@ -329,23 +310,26 @@
         .sauce-name {
             font-size: 8px;
             color: #cccccc;
+            flex: 1;
         }
         
         .sauce-sizes {
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .sauce-size {
             background: #333;
             color: #00ff00;
             border: 1px solid #00ff00;
-            padding: 5px 8px;
+            padding: 6px 10px;
             font-size: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Press Start 2P', cursive;
+            white-space: nowrap;
         }
         
         .sauce-size:hover {
@@ -387,7 +371,7 @@
         }
         
         .cart-section.collapsed {
-            bottom: -280px;
+            bottom: -250px;
         }
         
         .cart-toggle {
@@ -485,21 +469,33 @@
         
         .cart-item-info {
             flex: 1;
+            min-width: 0;
+        }
+        
+        .cart-item-name {
+            color: #00ffff;
+            margin-bottom: 3px;
+            word-break: break-word;
+        }
+        
+        .cart-item-price {
+            color: #ffff00;
         }
         
         .cart-item-controls {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
         }
         
         .cart-item-qty-btn {
             background: #333;
             color: #00ff00;
             border: 1px solid #00ff00;
-            width: 20px;
-            height: 20px;
-            font-size: 8px;
+            width: 24px;
+            height: 24px;
+            font-size: 10px;
             cursor: pointer;
             font-family: 'Press Start 2P', cursive;
             transition: all 0.3s ease;
@@ -511,19 +507,25 @@
         .cart-item-qty-btn:hover {
             background: #00ff00;
             color: #000;
+            transform: scale(1.1);
+        }
+        
+        .cart-item-qty-btn:active {
+            transform: scale(0.95);
         }
         
         .cart-item-qty {
             color: #00ff00;
-            min-width: 20px;
+            min-width: 25px;
             text-align: center;
+            font-size: 9px;
         }
         
         .cart-item-remove {
             background: #ff0080;
             color: #000;
             border: none;
-            padding: 4px 8px;
+            padding: 5px 10px;
             font-size: 7px;
             cursor: pointer;
             font-family: 'Press Start 2P', cursive;
@@ -724,12 +726,17 @@
                 font-size: 8px;
             }
             
+            .add-item-btn {
+                font-size: 7px;
+                padding: 10px 15px;
+            }
+            
             .cart-section {
                 padding: 12px;
             }
             
             .cart-section.collapsed {
-                bottom: -340px;
+                bottom: -310px;
             }
             
             .cart-items {
@@ -744,16 +751,6 @@
             .checkout-btn {
                 font-size: 7px;
                 padding: 10px;
-            }
-            
-            .quantity-control {
-                flex-wrap: wrap;
-            }
-            
-            .add-to-cart {
-                width: 100%;
-                margin-top: 10px;
-                margin-left: 0;
             }
             
             .scroll-to-top {
@@ -778,6 +775,10 @@
             .modal-btn {
                 font-size: 7px;
                 padding: 10px;
+            }
+            
+            .sauce-sizes {
+                justify-content: flex-end;
             }
         }
     </style>
@@ -809,12 +810,7 @@
                 <div class="item-description">
                     Carne artesanal assada na brasa, duplo queijo cheddar, alface e maionese temperada de alho.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item" data-name="COXINHA" data-price="6">
@@ -825,12 +821,7 @@
                 <div class="item-description">
                     Coxinha crocante de 150gr de Frango empanado na farinha panko.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item" data-name="BURGER 1.0" data-price="15">
@@ -841,12 +832,7 @@
                 <div class="item-description">
                     Carne artesanal, queijo cheddar, alface, tomate, cebola roxa e molho especial 1.0.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item" data-name="OVERCLOCK" data-price="18">
@@ -857,12 +843,7 @@
                 <div class="item-description">
                     Carne artesanal, queijo cheddar, tiras de bacon, cebola caramelizada e molho barbecue.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item" data-name="DOUBLE XP" data-price="32">
@@ -873,12 +854,7 @@
                 <div class="item-description">
                     Duplo artesanal assado na brasa, queijo cheddar, tiras de bacon, cebola caramelizada, molho XP da casa e queijo coalho assado.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item limited-edition" data-name="FATAL ERROR" data-price="26">
@@ -890,12 +866,7 @@
                 <div class="item-description">
                     Carne de carneiro, queijo coalho assado, e queijo mussarela derretido, alface, cebola roxa e molho barbecue.
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
         </section>
         
@@ -908,12 +879,7 @@
                     <span class="item-name">COCA-COLA 350ML</span>
                     <span class="item-price">R$ 6</span>
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
             
             <div class="menu-item" data-name="REFRIGERANTE ANTÁRTICA (LATA)" data-price="5">
@@ -921,12 +887,7 @@
                     <span class="item-name">REFRIGERANTE ANTÁRTICA (LATA)</span>
                     <span class="item-price">R$ 5</span>
                 </div>
-                <div class="quantity-control">
-                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                    <span class="quantity-display">0</span>
-                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
-                </div>
+                <button class="add-item-btn" onclick="addItemToCart(this)">+ ADICIONAR</button>
             </div>
         </section>
         
@@ -1003,7 +964,7 @@
     
     <!-- ===== CARRINHO FIXO ===== -->
     <div class="cart-section" id="cartSection">
-        <button class="cart-toggle" id="cartToggle" onclick="toggleCart()">▼ MOSTRAR/OCULTAR</button>
+        <button class="cart-toggle" id="cartToggle" onclick="toggleCart()">▼ OCULTAR CARRINHO</button>
         
         <div class="cart-header">
             <span class="cart-title" id="cartTitle">[ CARRINHO ]</span>
@@ -1085,7 +1046,16 @@
         // ===== TOGGLE CARRINHO =====
         function toggleCart() {
             const cartSection = document.getElementById('cartSection');
+            const toggleBtn = document.getElementById('cartToggle');
+            
             cartSection.classList.toggle('collapsed');
+            
+            // Atualizar texto do botão
+            if (cartSection.classList.contains('collapsed')) {
+                toggleBtn.textContent = '▲ MOSTRAR CARRINHO';
+            } else {
+                toggleBtn.textContent = '▼ OCULTAR CARRINHO';
+            }
         }
         
         // ===== PERSISTÊNCIA - LOCALSTORAGE =====
@@ -1121,65 +1091,38 @@
             localStorage.setItem(OBSERVATIONS_STORAGE_KEY, observations);
         }
         
-        // ===== CONTROLES DE QUANTIDADE DOS ITENS =====
-        function increaseQuantity(button) {
-            const quantityDisplay = button.previousElementSibling;
-            let quantity = parseInt(quantityDisplay.textContent);
-            quantity++;
-            quantityDisplay.textContent = quantity;
-        }
-        
-        function decreaseQuantity(button) {
-            const quantityDisplay = button.nextElementSibling;
-            let quantity = parseInt(quantityDisplay.textContent);
-            if (quantity > 0) {
-                quantity--;
-                quantityDisplay.textContent = quantity;
-            }
-        }
-        
-        // ===== ADICIONAR AO CARRINHO =====
-        function addToCart(button) {
+        // ===== ADICIONAR ITEM AO CARRINHO (SIMPLIFICADO) =====
+        function addItemToCart(button) {
             const menuItem = button.closest('.menu-item');
             const name = menuItem.dataset.name;
             const price = parseFloat(menuItem.dataset.price);
-            const quantityElement = menuItem.querySelector('.quantity-display');
-            const quantity = parseInt(quantityElement.textContent);
             
-            if (quantity > 0) {
-                const existingItem = cart.find(item => item.name === name);
-                
-                if (existingItem) {
-                    existingItem.quantity += quantity;
-                } else {
-                    cart.push({
-                        name: name,
-                        price: price,
-                        quantity: quantity
-                    });
-                }
-                
-                showAddedFeedback(button);
-                showToast(`${quantity}x ${name} adicionado!`, 'success');
-                
-                quantityElement.textContent = '0';
-                updateCart();
+            // Procura se o item já existe no carrinho
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+                showToast(`Quantidade de ${name} aumentada!`, 'success');
             } else {
-                showToast('Selecione a quantidade primeiro!', 'error');
+                cart.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+                showToast(`${name} adicionado ao carrinho!`, 'success');
             }
-        }
-        
-        function showAddedFeedback(button) {
-            const originalText = button.textContent;
-            const originalClass = button.className;
             
+            // Feedback visual no botão
+            button.classList.add('added', 'pulse');
+            const originalText = button.textContent;
             button.textContent = '✓ ADICIONADO';
-            button.classList.add('added');
             
             setTimeout(() => {
+                button.classList.remove('added', 'pulse');
                 button.textContent = originalText;
-                button.className = originalClass;
             }, 1000);
+            
+            updateCart();
         }
         
         // ===== ADICIONAR MOLHO =====
@@ -1201,14 +1144,15 @@
             updateCart();
         }
         
-        // ===== GERENCIAR CARRINHO =====
+        // ===== GERENCIAR QUANTIDADE NO CARRINHO =====
         function updateCartItemQuantity(index, change) {
             if (cart[index]) {
                 cart[index].quantity += change;
                 
                 if (cart[index].quantity <= 0) {
+                    const itemName = cart[index].name;
                     cart.splice(index, 1);
-                    showToast('Item removido do carrinho', 'error');
+                    showToast(`${itemName} removido!`, 'error');
                 }
                 
                 updateCart();
@@ -1258,8 +1202,8 @@
                     cartItem.className = 'cart-item';
                     cartItem.innerHTML = `
                         <div class="cart-item-info">
-                            <div>${item.name}</div>
-                            <div style="color: #ffff00; margin-top: 3px;">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
                         </div>
                         <div class="cart-item-controls">
                             <button class="cart-item-qty-btn" onclick="updateCartItemQuantity(${index}, -1)">-</button>
@@ -1351,7 +1295,7 @@
             message += '⏰ ' + new Date().toLocaleString('pt-BR');
             
             const encodedMessage = encodeURIComponent(message);
-            const phoneNumber = '5581979073959';
+            const phoneNumber = '5581979073059';
             
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
@@ -1402,9 +1346,9 @@
                     '>>> SISTEMA ONLINE - FAÇA SEU PEDIDO! <span style="animation: blink 0.5s infinite;">█</span>';
             }, 2000);
             
-            console.log('🍔 ByteBurger v2.0 - Sistema Iniciado!');
-            console.log('⚡ Recursos: Persistência, Notificações, Confirmações, Edição no Carrinho');
-            console.log('⌨️  Atalhos: ESC (fechar modal), Ctrl+Enter (enviar), Ctrl+L (limpar)');
+            console.log('🍔 ByteBurger v3.0 - Interface Simplificada!');
+            console.log('⚡ Clique direto no botão ADICIONAR - gerencie quantidades no carrinho');
+            console.log('⌨️  Atalhos: ESC (fechar), Ctrl+Enter (enviar), Ctrl+L (limpar)');
         });
     </script>
 </body>
