@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteBurger - Cardápio Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff00;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 2px,
+                rgba(0, 255, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border: 3px solid #00ff00;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0080, #00ff00, #0080ff, #ff0080);
+            z-index: -1;
+            border-radius: 5px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            color: #ff0080;
+            text-shadow: 2px 2px 0px #00ff00, 4px 4px 0px #0080ff;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 2px 2px 0px #00ff00, 4px 4px 0px #0080ff, 0 0 10px #ff0080; }
+            to { text-shadow: 2px 2px 0px #00ff00, 4px 4px 0px #0080ff, 0 0 20px #ff0080, 0 0 30px #ff0080; }
+        }
+        
+        .tagline {
+            font-size: 8px;
+            color: #00ffff;
+            margin-top: 10px;
+            animation: blink 1.5s linear infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .section {
+            margin: 30px 0;
+            border: 2px solid #00ff00;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 14px;
+            color: #ff0080;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        
+        .menu-item {
+            margin: 15px 0;
+            border: 1px solid #333;
+            padding: 15px;
+            background: linear-gradient(90deg, rgba(0, 255, 0, 0.05) 0%, rgba(0, 0, 0, 0.95) 100%);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            border-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .item-name {
+            font-size: 10px;
+            color: #00ffff;
+            text-shadow: 1px 1px 2px rgba(0, 255, 255, 0.5);
+        }
+        
+        .item-price {
+            font-size: 12px;
+            color: #ffff00;
+            text-shadow: 1px 1px 2px rgba(255, 255, 0, 0.5);
+        }
+        
+        .item-description {
+            font-size: 7px;
+            color: #cccccc;
+            line-height: 1.4;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quantity-btn {
+            background: #ff0080;
+            color: #000;
+            border: none;
+            width: 30px;
+            height: 30px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-btn:hover {
+            background: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .quantity-display {
+            color: #00ff00;
+            font-size: 10px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .add-to-cart {
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 7px;
+            cursor: pointer;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .add-to-cart:hover {
+            background: linear-gradient(45deg, #ffff00, #ff0080);
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
+        }
+        
+        .cart-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 3px solid #ff0080;
+            padding: 20px;
+            z-index: 500;
+            box-shadow: 0 -5px 20px rgba(255, 0, 128, 0.3);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .cart-title {
+            color: #ff0080;
+            font-size: 12px;
+        }
+        
+        .cart-total {
+            color: #ffff00;
+            font-size: 12px;
+        }
+        
+        .cart-items {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+            font-size: 7px;
+            color: #cccccc;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ff0080, #ffff00);
+            color: #000;
+            border: none;
+            padding: 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 128, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 0, 128, 0.8), 0 0 30px rgba(255, 255, 0, 0.4); }
+        }
+        
+        .limited-edition {
+            background: linear-gradient(45deg, rgba(255, 0, 128, 0.2), rgba(0, 255, 255, 0.2));
+            border-color: #ff0080 !important;
+        }
+        
+        .limited-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #ff0080;
+            color: #000;
+            padding: 5px 10px;
+            font-size: 6px;
+            border: 1px solid #00ff00;
+        }
+        
+        .sauce-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .sauce-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #333;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .sauce-name {
+            font-size: 8px;
+            color: #cccccc;
+        }
+        
+        .sauce-sizes {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .sauce-size {
+            background: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 5px 8px;
+            font-size: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sauce-size:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .contact-info {
+            text-align: center;
+            font-size: 8px;
+            color: #00ffff;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        
+        .phone {
+            color: #ffff00;
+            text-shadow: 1px 1px 2px rgba(255, 255, 0, 0.5);
+        }
+        
+        .empty-cart {
+            text-align: center;
+            color: #666;
+            font-size: 8px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                margin-bottom: 200px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 12px;
+            }
+            
+            .item-name {
+                font-size: 9px;
+            }
+            
+            .item-price {
+                font-size: 10px;
+            }
+            
+            .item-description {
+                font-size: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">BYTEBURGER</h1>
+            <p class="tagline">>>> SISTEMA DE PEDIDOS ATIVADO... <span style="animation: blink 0.5s infinite;">█</span></p>
+        </header>
+        
+        <section class="section">
+            <h2 class="section-title">[ MAIN PROGRAMS ]</h2>
+            
+            <div class="menu-item" data-name="BASIC CODE" data-price="13">
+                <div class="item-header">
+                    <span class="item-name">BASIC CODE</span>
+                    <span class="item-price">R$ 13</span>
+                </div>
+                <div class="item-description">
+                    Carne artesanal assada na brasa, duplo queijo cheddar, alface e maionese temperada de alho.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item" data-name="COXINHA" data-price="6">
+                <div class="item-header">
+                    <span class="item-name">COXINHA</span>
+                    <span class="item-price">R$ 6</span>
+                </div>
+                <div class="item-description">
+                    Coxinha crocante de 150gr de Frango empanado na farinha panko.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item" data-name="BURGER 1.0" data-price="15">
+                <div class="item-header">
+                    <span class="item-name">BURGER 1.0</span>
+                    <span class="item-price">R$ 15</span>
+                </div>
+                <div class="item-description">
+                    Carne artesanal, queijo cheddar, alface, tomate, cebola roxa e molho especial 1.0.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item" data-name="OVERCLOCK" data-price="18">
+                <div class="item-header">
+                    <span class="item-name">OVERCLOCK</span>
+                    <span class="item-price">R$ 18</span>
+                </div>
+                <div class="item-description">
+                    Carne artesanal, queijo cheddar, tiras de bacon, cebola caramelizada e molho barbecue.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item" data-name="DOUBLE XP" data-price="32">
+                <div class="item-header">
+                    <span class="item-name">DOUBLE XP</span>
+                    <span class="item-price">R$ 32</span>
+                </div>
+                <div class="item-description">
+                    Duplo artesanal assado na brasa, queijo cheddar, tiras de bacon, cebola caramelizada, molho XP da casa e queijo coalho assado.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item limited-edition" data-name="FATAL ERROR" data-price="26">
+                <div class="limited-badge">EDIÇÃO LIMITADA!</div>
+                <div class="item-header">
+                    <span class="item-name">FATAL ERROR</span>
+                    <span class="item-price">R$ 26</span>
+                </div>
+                <div class="item-description">
+                    Carne de carneiro, queijo coalho assado, e queijo mussarela derretido, alface, cebola roxa e molho barbecue.
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">[ BEVERAGES.EXE ]</h2>
+            
+            <div class="menu-item" data-name="COCA-COLA 350ML" data-price="6">
+                <div class="item-header">
+                    <span class="item-name">COCA-COLA 350ML</span>
+                    <span class="item-price">R$ 6</span>
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+            
+            <div class="menu-item" data-name="REFRIGERANTE ANTÁRTICA (LATA)" data-price="5">
+                <div class="item-header">
+                    <span class="item-name">REFRIGERANTE ANTÁRTICA (LATA)</span>
+                    <span class="item-price">R$ 5</span>
+                </div>
+                <div class="quantity-control">
+                    <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
+                    <span class="quantity-display">0</span>
+                    <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    <button class="add-to-cart" onclick="addToCart(this)">ADD TO CART</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2 class="section-title">[ ADD-ONS & MODS ]</h2>
+            <p style="font-size: 8px; color: #00ffff; margin-bottom: 15px;">Molhos Adicionais:</p>
+            
+            <div class="sauce-grid">
+                <div class="sauce-item">
+                    <span class="sauce-name">Maionese de bacon</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese de bacon', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese de bacon', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Maionese de alho</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese de alho', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese de alho', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Maionese defumada com mel</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese defumada com mel', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese defumada com mel', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Maionese verde da casa</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese verde da casa', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Maionese verde da casa', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Cheddar Cremoso</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Cheddar Cremoso', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Cheddar Cremoso', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Catupiry cremoso</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Catupiry cremoso', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Catupiry cremoso', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+                
+                <div class="sauce-item">
+                    <span class="sauce-name">Barbecue</span>
+                    <div class="sauce-sizes">
+                        <button class="sauce-size" onclick="addSauceToCart('Barbecue', '30ml', 2)">30ml - R$2</button>
+                        <button class="sauce-size" onclick="addSauceToCart('Barbecue', '60ml', 4)">60ml - R$4</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="contact-info">
+            <span class="phone">(81) 97907-3059</span><br>
+            Rua doze, nº 6, parque capibaribe,<br>
+            são lourenço da mata - pe
+        </div>
+    </div>
+    
+    <div class="cart-section">
+        <div class="cart-header">
+            <span class="cart-title">[ CARRINHO ]</span>
+            <span class="cart-total">TOTAL: R$ <span id="cart-total">0,00</span></span>
+        </div>
+        
+        <div class="cart-items" id="cart-items">
+            <div class="empty-cart">Seu carrinho está vazio</div>
+        </div>
+        
+        <button class="checkout-btn" onclick="checkout()">ENVIAR PEDIDO VIA WHATSAPP</button>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function increaseQuantity(button) {
+            const quantityDisplay = button.previousElementSibling;
+            let quantity = parseInt(quantityDisplay.textContent);
+            quantity++;
+            quantityDisplay.textContent = quantity;
+        }
+
+        function decreaseQuantity(button) {
+            const quantityDisplay = button.nextElementSibling;
+            let quantity = parseInt(quantityDisplay.textContent);
+            if (quantity > 0) {
+                quantity--;
+                quantityDisplay.textContent = quantity;
+            }
+        }
+
+        function addToCart(button) {
+            const menuItem = button.closest('.menu-item');
+            const name = menuItem.dataset.name;
+            const price = parseFloat(menuItem.dataset.price);
+            const quantityElement = menuItem.querySelector('.quantity-display');
+            const quantity = parseInt(quantityElement.textContent);
+
+            if (quantity > 0) {
+                // Verificar se o item já existe no carrinho
+                const existingItem = cart.find(item => item.name === name);
+                
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({
+                        name: name,
+                        price: price,
+                        quantity: quantity
+                    });
+                }
+
+                quantityElement.textContent = '0';
+                updateCart();
+            }
+        }
+
+        function addSauceToCart(name, size, price) {
+            const fullName = `${name} (${size})`;
+            
+            // Verificar se o molho já existe no carrinho
+            const existingItem = cart.find(item => item.name === fullName);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name: fullName,
+                    price: price,
+                    quantity: 1
+                });
+            }
+
+            updateCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
+                total = 0;
+            } else {
+                cartItems.innerHTML = '';
+                total = 0;
+
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <span>${item.quantity}x ${item.name}</span>
+                        <div>
+                            <span>R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
+                            <button onclick="removeFromCart(${index})" style="background: #ff0080; color: #000; border: none; margin-left: 10px; padding: 2px 5px; font-size: 6px; cursor: pointer;">X</button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+            }
+
+            cartTotal.textContent = total.toFixed(2).replace('.', ',');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+
+            // Criar mensagem formatada para WhatsApp
+            let message = '*🍔 PEDIDO BYTEBURGER 🍔*\n\n';
+            message += '📋 *COMANDA:*\n';
+            message += '━━━━━━━━━━━━━━━━━━━━━━━\n';
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                message += `• ${item.quantity}x ${item.name}\n`;
+                message += `  R$ ${itemTotal.toFixed(2).replace('.', ',')}\n\n`;
+            });
+
+            message += '━━━━━━━━━━━━━━━━━━━━━━━\n';
+            message += `💰 *TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n\n`;
+            message += '📱 Pedido feito pelo cardápio online\n';
+            message += '⏰ ' + new Date().toLocaleString('pt-BR');
+
+            // Codificar mensagem para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Tentar múltiplas abordagens para abrir o WhatsApp
+            const phoneNumber = '5581979073959';
+            
+            // Detectar se é mobile ou desktop
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Para dispositivos móveis, tentar primeiro o link direto do app
+                const whatsappAppUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+                
+                try {
+                    window.location.href = whatsappAppUrl;
+                    
+                    // Fallback para wa.me se o app não abrir
+                    setTimeout(() => {
+                        const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                        window.open(waUrl, '_blank');
+                    }, 1000);
+                    
+                } catch (e) {
+                    // Se falhar, usar wa.me
+                    const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                    window.open(waUrl, '_blank');
+                }
+            } else {
+                // Para desktop, usar wa.me diretamente
+                const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                
+                try {
+                    window.open(waUrl, '_blank');
+                } catch (e) {
+                    // Fallback: mostrar as informações para copiar manualmente
+                    showManualOptions(message, phoneNumber);
+                }
+            }
+        }
+        
+        function showManualOptions(message, phoneNumber) {
+            // Mostrar modal com opções manuais
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: #1a1a2e;
+                    border: 3px solid #00ff00;
+                    padding: 20px;
+                    max-width: 500px;
+                    width: 100%;
+                    font-family: 'Press Start 2P', cursive;
+                    color: #00ff00;
+                    text-align: center;
+                ">
+                    <h3 style="color: #ff0080; margin-bottom: 20px; font-size: 12px;">OPÇÕES DE ENVIO</h3>
+                    
+                    <button onclick="copyMessage()" style="
+                        background: #00ff00;
+                        color: #000;
+                        border: none;
+                        padding: 10px 20px;
+                        margin: 10px;
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 8px;
+                        cursor: pointer;
+                        width: 100%;
+                    ">COPIAR PEDIDO</button>
+                    
+                    <div style="margin: 20px 0; font-size: 8px; color: #cccccc;">
+                        Depois envie para:<br>
+                        <strong style="color: #ffff00;">${phoneNumber.replace('55', '+55 ').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')}</strong>
+                    </div>
+                    
+                    <button onclick="tryWhatsAppAgain()" style="
+                        background: #ff0080;
+                        color: #fff;
+                        border: none;
+                        padding: 10px 20px;
+                        margin: 10px;
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 8px;
+                        cursor: pointer;
+                        width: 100%;
+                    ">TENTAR WHATSAPP NOVAMENTE</button>
+                    
+                    <button onclick="closeModal()" style="
+                        background: #333;
+                        color: #fff;
+                        border: 1px solid #666;
+                        padding: 10px 20px;
+                        margin: 10px;
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 8px;
+                        cursor: pointer;
+                        width: 100%;
+                    ">FECHAR</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Adicionar funções ao escopo global temporariamente
+            window.copyMessage = function() {
+                navigator.clipboard.writeText(message).then(function() {
+                    alert('Pedido copiado! Agora abra o WhatsApp e cole a mensagem.');
+                    document.body.removeChild(modal);
+                }).catch(function() {
+                    // Fallback para navegadores mais antigos
+                    const textarea = document.createElement('textarea');
+                    textarea.value = message;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    alert('Pedido copiado! Agora abra o WhatsApp e cole a mensagem.');
+                    document.body.removeChild(modal);
+                });
+            };
+            
+            window.tryWhatsAppAgain = function() {
+                document.body.removeChild(modal);
+                const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(waUrl, '_blank');
+            };
+            
+            window.closeModal = function() {
+                document.body.removeChild(modal);
+            };
+        }
+
+        // Animação de loading inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.querySelector('.tagline').innerHTML = '>>> SISTEMA ONLINE - FAÇA SEU PEDIDO! <span style="animation: blink 0.5s infinite;">█</span>';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
